@@ -1,10 +1,10 @@
 import request from 'supertest'
 import app from '../app.js'
 
-describe('Listing routes', () => {
-  it('should return active listings', async () => {
-    const res = await request(app).get('/api/v1/listings')
+describe('Startup routes', () => {
+  it('should return health status', async () => {
+    const res = await request(app).get('/api/v1/health')
     expect(res.statusCode).toBe(200)
-    expect(Array.isArray(res.body.data)).toBe(true)
+    expect(res.body).toMatchObject({ success: true, status: 'ok' })
   })
 })

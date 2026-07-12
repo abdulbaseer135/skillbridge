@@ -16,7 +16,21 @@ const loginSchema = z.object({
 })
 
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = registerSchema.parse(req.body)
+  let parsed
+  try {
+    parsed = registerSchema.parse(req.body)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request data',
+        details: error.issues.map((issue) => ({ path: issue.path, message: issue.message })),
+      })
+    }
+    throw error
+  }
+
+  const { name, email, password } = parsed
 
   const existingUser = await User.findOne({ email })
   if (existingUser) {

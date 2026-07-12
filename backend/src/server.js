@@ -1,14 +1,12 @@
 import http from 'http'
-import dotenv from 'dotenv'
 import app from './app.js'
 import { initSocket } from './sockets/chatSocketHandler.js'
 import { connectDB } from './config/db.js'
+import env from './config/env.js'
 
-dotenv.config()
+connectDB(env.MONGODB_URI)
 
-connectDB(process.env.MONGODB_URI)
-
-const PORT = process.env.PORT || 5000
+const PORT = env.PORT
 const server = http.createServer(app)
 
 initSocket(server)

@@ -4,7 +4,6 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
-import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import listingRoutes from './routes/listingRoutes.js'
@@ -14,12 +13,9 @@ import reportRoutes from './routes/reportRoutes.js'
 import reviewRoutes from './routes/reviewRoutes.js'
 import { errorHandler } from './middleware/errorMiddleware.js'
 import { notFound } from './middleware/notFoundMiddleware.js'
-
-dotenv.config()
+import env from './config/env.js'
 
 const app = express()
-
-connectDB(process.env.MONGODB_URI)
 
 app.use(helmet())
 app.use(express.json())
@@ -27,11 +23,11 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: env.CLIENT_URL,
     credentials: true,
   }),
 )
-app.use(morgan('dev'))
+app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -43,6 +39,10 @@ app.use(
 
 app.get('/api/v1', (req, res) => {
   res.json({ status: 'ok', message: 'SkillBridge API is running' })
+})
+
+app.get('/api/v1/health', (req, res) => {
+  res.json({ success: true, status: 'ok', environment: env.NODE_ENV })
 })
 
 app.use('/api/v1/auth', authRoutes)

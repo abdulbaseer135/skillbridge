@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
+import env from '../config/env.js'
 import Conversation from '../models/Conversation.js'
 import Message from '../models/Message.js'
 import User from '../models/User.js'
@@ -7,7 +8,7 @@ import User from '../models/User.js'
 export const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL,
+      origin: env.CLIENT_URL,
       credentials: true,
     },
   })
@@ -24,7 +25,7 @@ export const initSocket = (server) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+      const decoded = jwt.verify(token, env.JWT_SECRET)
       const user = await User.findById(decoded.id)
       if (!user) return next(new Error('Unauthorized'))
       socket.user = user
