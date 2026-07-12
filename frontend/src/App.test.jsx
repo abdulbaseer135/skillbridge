@@ -3,6 +3,6 @@ import App from './App.jsx'
 
 test('renders app with navbar and footer', () => {
   render(<App />)
-  expect(screen.getByRole('navigation')).toBeInTheDocument()
-  expect(screen.getByText(/skillbridge/i)).toBeInTheDocument()
+  expect(screen.getByRole('navigation')).toBeTruthy()
+  expect(screen.getByRole('link', { name: /skillbridge/i })).toBeTruthy()
 })
